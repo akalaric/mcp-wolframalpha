@@ -28,9 +28,10 @@ if __name__ == "__main__":
     async def main():
         async with GemmaClient() as client:
             while True:
-                test = input("Enter question: ")
-                response = await client.invokeModel(test)
+                user_input = await asyncio.to_thread(input, "Enter question (or type 'exit' to quit): ")
+                if user_input.lower() == "exit":
+                    print("Exiting...")
+                    break
+                response = await client.invokeModel(user_input, vision=False)
                 print(response.content)
-
     asyncio.run(main())
-

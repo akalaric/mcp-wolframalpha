@@ -26,8 +26,13 @@ class QuantizedLLM(baseFunctions):
 # Test the client
 if __name__ == "__main__":
     async def main():
-        async with QuantizedLLM("/home/vsdev/custom_models/Meta-Llama-3-8B-Instruct.Q4_K_M.gguf") as client:
-            response = await client.invokeModel("explain sin(x)")
-            print(response.content)
+        async with QuantizedLLM("Meta-Llama-3-8B-Instruct.Q4_K_M.gguf") as client:
+            while True:
+                user_input = await asyncio.to_thread(input, "Enter question (or type 'exit' to quit): ")
+                if user_input.lower() == "exit":
+                    print("Exiting...")
+                    break
+                response = await client.invokeModel(user_input)
+                print(response.content)
         
     asyncio.run(main())

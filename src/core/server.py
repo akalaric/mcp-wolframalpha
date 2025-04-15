@@ -1,4 +1,3 @@
-import mcp
 import sys
 import os
 import asyncio
@@ -32,10 +31,9 @@ async def wolfram_query(query: str, vision=False):
                 sections.append({"type": "text", "text": item.text})
             elif item.type == "image":
                 sections.append({
-                    "type": "image_url",
-                    "image_url": {
-                        "url": f"data:{item.mimeType};base64,{item.data}" 
-                    }
+                    "type": "image",
+                    "data": {item.mimeType},
+                    "base64": {item.data} 
                 })
         else:
             if item.type == "text":
@@ -45,6 +43,7 @@ async def wolfram_query(query: str, vision=False):
     return sections if vision else "\n\n".join(item["text"] for item in sections)
     
 if __name__ == "__main__":
+    # print(asyncio.run(wolfram_query("plot sinx", vision=True))) #Test the server
     asyncio.run(mcp.run())
     
     

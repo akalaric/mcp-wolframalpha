@@ -1,16 +1,16 @@
-# 🚧 MCP WolframAlpha
+# MCP Server for Wolfram Alpha Integration
+Seamlessly integrate Wolfram Alpha into your chat applications.
 
-Model-Context-Protocol (MCP) tool that queries **Wolfram|Alpha**, processes structured results (text/images), and explains them using an LLM model via **LangChain**. It includes a CLI entrypoint and a FastMCP server.
+This project implements an MCP (Model Context Protocol) server designed to interface with the Wolfram Alpha API. It enables chat-based applications to perform computational queries and retrieve structured knowledge, facilitating advanced conversational capabilities.
 
 ---
 
 ## ✨ Features
 
-- 📡 **Wolfram|Alpha Integration** for math, science, and data queries  
-- 🧠 **LLM-Based Explanation** using Gemini (via LangChain)  
-- 🖼️ Optional **vision support**: returns base64-encoded images  
-- ⚡ Fully async architecture for scalable tool calls  
-
+- **Wolfram|Alpha Integration** for math, science, and data queries  
+- **LLM-Based Explanation** using Gemini (via LangChain)  
+- **Modular Architecture**: Easily extendable to support additional APIs and functionalities.
+- 
 ---
 
 ## ⚙️ Installation
@@ -29,5 +29,3 @@ Create a .env file based on the example:
 
 ### 4. 🚀 Run as CLI Tool
 - python main.py
- 
- 

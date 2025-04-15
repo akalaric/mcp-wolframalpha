@@ -23,8 +23,8 @@ class baseFunctions:
         
         if wolfram_response:
             prompt = ChatPromptTemplate.from_messages([
-                ("system", "You are a highly skilled assistant who can interpret complex scientific data. Your job is to explain this information in simple, easy-to-understand terms."),
-                ("human", "I’ve retrieved some data from WolframAlpha: {wolfram_response}. Could you explain it in a way that’s easy for anyone to understand?"),
+                ("system", "You are a brilliant scientific assistant who excels at breaking down concepts into clear explanations. If any visual information is included, explain and show the content"),
+                ("human", "Here's the result: {wolfram_response}. Can you explain  it?"),
             ])
             chain = prompt | self.generator
             response = chain.invoke({"wolfram_response": wolfram_response})
