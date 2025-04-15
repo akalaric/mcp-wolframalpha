@@ -29,4 +29,4 @@ Create a .env file based on the example:
 ### 4. 🚀 Run as CLI Tool
 - python main.py
 
-<img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExYXFuY2t1M2VvcXl2emszeXJoZWI3dXZuNTNqaWloc3Uxd3phaGU5byZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/L8K62iTDkzGX6/giphy.gif" width="60" height="40" />
+                            <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExYXFuY2t1M2VvcXl2emszeXJoZWI3dXZuNTNqaWloc3Uxd3phaGU5byZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/L8K62iTDkzGX6/giphy.gif" width="120" height="100" />
