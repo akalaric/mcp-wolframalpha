@@ -10,7 +10,6 @@ This project implements an MCP (Model Context Protocol) server designed to inter
 - **Wolfram|Alpha Integration** for math, science, and data queries  
 - **LLM-Based Explanation** using Gemini (via LangChain)  
 - **Modular Architecture**: Easily extendable to support additional APIs and functionalities.
-- 
 ---
 
 ## ⚙️ Installation
