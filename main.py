@@ -1,18 +1,22 @@
-import argparse
 import asyncio
-from src.models.gemma_client import GemmaClient, call_mcp_tool
-
-async def main(query: str):
-    try:
-        mcp_response = await call_mcp_tool(query)
-        gemma = GemmaClient()
-        explanation = await gemma.generate(mcp_response)
-        print(explanation.content)
-    except Exception as e:
-        raise RuntimeError("Error during MCP tool call") from e
+import argparse
+from src.models.gemma_client import GemmaClient
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Invoke Gemma with query_wolfram MCP")
-    parser.add_argument("query", type=str, help="Ask Wolfram|Alpha")
+    parser.add_argument("--vision", action="store_true", help="Enable vision mode")
     args = parser.parse_args()
-    asyncio.run(main(args.query))
+    
+    async def main():
+        async with GemmaClient() as client:
+            while True:
+                user_input = await asyncio.to_thread(input, "\nEnter question (or type 'exit' to quit): ")
+                if user_input.lower() == "exit":
+                    print("Exiting...")
+                    break
+                if args.vision:
+                    response = await client.invokeModel(user_input, vision=True)
+                else:
+                    response = await client.invokeModel(user_input)
+                print(response.content)
+    asyncio.run(main())
