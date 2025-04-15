@@ -28,6 +28,6 @@ Create a .env file based on the example:
 - pip install -r requirements.txt
 
 ### 4. 🚀 Run as CLI Tool
-- python main.py "integrate x^2"
+- python main.py
  
-- This project is being developed
+ 

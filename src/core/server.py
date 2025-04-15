@@ -41,11 +41,10 @@ async def wolfram_query(query: str, vision=False):
             if item.type == "text":
                 print(item.text)
                 sections.append({"type": "text", "text": item.text})
-                
+                    
     return sections if vision else "\n\n".join(item["text"] for item in sections)
     
 if __name__ == "__main__":
-    # print(asyncio.run(wolfram_query("Y = -X")))
     asyncio.run(mcp.run())
     
     
