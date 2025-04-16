@@ -1,6 +1,7 @@
 import sys
 import os
 import asyncio
+import base64
 from fastmcp import FastMCP
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from api.wolfram_client import WolframAlphaServer
@@ -22,6 +23,7 @@ async def wolfram_query(query: str, vision=False):
         wolfram_server = WolframAlphaServer()
     except Exception as e:
         raise Exception(f"Initialization error: {e}")
+
     sections = []
     results = await wolfram_server.execute_query(query)
 
@@ -30,18 +32,18 @@ async def wolfram_query(query: str, vision=False):
             if item.type == "text":
                 sections.append({"type": "text", "text": item.text})
             elif item.type == "image":
+                image_data_uri = f"data:{item.mimeType};base64,{item.data}"
                 sections.append({
                     "type": "image",
-                    "data": {item.mimeType},
-                    "base64": {item.data} 
+                    "data": image_data_uri
                 })
         else:
             if item.type == "text":
                 print(item.text)
                 sections.append({"type": "text", "text": item.text})
-                    
+
     return sections if vision else "\n\n".join(item["text"] for item in sections)
-    
+        
 if __name__ == "__main__":
     # print(asyncio.run(wolfram_query("plot sinx", vision=True))) #Test the server
     asyncio.run(mcp.run())

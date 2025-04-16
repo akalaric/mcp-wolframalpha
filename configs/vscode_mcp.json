@@ -1,0 +1,12 @@
+{
+    "servers": {
+        "WolframAlphaServer": {
+            "type": "stdio",
+            "command": "fastmcp", //fastmcp 
+            "args": [
+                "run",
+                "/src/core/server.py" //server.py location
+            ]
+        }
+    }
+}
