@@ -14,9 +14,9 @@ This project implements an MCP (Model Context Protocol) server designed to inter
 
 -  **LLM-Based Explanation** using Gemini (via LangChain).
 
--  **Modular Architecture**: Easily extendable to support additional APIs and functionalities.
+-  **Modular Architecture** Easily extendable to support additional APIs and functionalities.
 
--  **Multi-Client Support** – Seamlessly handle interactions from multiple clients or interfaces.
+-  **Multi-Client Support** Seamlessly handle interactions from multiple clients or interfaces.
 
 ---
 
