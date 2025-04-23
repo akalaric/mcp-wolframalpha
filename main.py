@@ -14,6 +14,9 @@ if __name__ == "__main__":
                 if user_input.lower() == "exit":
                     print("Exiting...")
                     break
+                if not user_input.strip():
+                    print("No input provided. Please enter a valid question.")
+                    continue
                 if args.vision:
                     response = await client.invokeModel(user_input, vision=True)
                 else:

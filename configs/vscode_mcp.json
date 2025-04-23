@@ -2,9 +2,8 @@
     "servers": {
         "WolframAlphaServer": {
             "type": "stdio",
-            "command": "fastmcp", //fastmcp 
+            "command": "python3", 
             "args": [
-                "run",
                 "/src/core/server.py" //server.py location
             ]
         }

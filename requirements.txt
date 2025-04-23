@@ -5,6 +5,5 @@ langchain-google-genai
 langchain-core
 langchain-community
 fastmcp
-llama-cpp-python
 google-generativeai
 langchain
