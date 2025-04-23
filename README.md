@@ -1,4 +1,4 @@
-# MCP Server for Wolfram Alpha Integration
+# MCP Wolfram Alpha (Client + Server)
 Seamlessly integrate Wolfram Alpha into your chat applications.
 
 This project implements an MCP (Model Context Protocol) server designed to interface with the Wolfram Alpha API. It enables chat-based applications to perform computational queries and retrieve structured knowledge, facilitating advanced conversational capabilities.
