@@ -68,8 +68,8 @@ To use with Claude Desktop:
 This project includes an LLM client that communicates with the MCP server.
 
 #### Run as CLI Tool
-Required: GeminiAPI
-To run the client directly from the command line:
+- Required: GeminiAPI
+- To run the client directly from the command line:
 ```bash
 python main.py
 ```
