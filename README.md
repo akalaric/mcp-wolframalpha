@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/ricocf-mcp-wolframalpha-badge.png)](https://mseep.ai/app/ricocf-mcp-wolframalpha)
+
 # MCP Wolfram Alpha (Client + Server)
 Seamlessly integrate Wolfram Alpha into your chat applications.
 
