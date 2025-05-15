@@ -6,7 +6,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from models.gemma_client import GemmaClient
 dir_path = os.path.dirname(os.path.realpath(__file__))
 favicon_path = os.path.join(dir_path, 'wolfram-alpha.png')
-
 client = None 
 async def startup():
     global client
@@ -31,9 +30,9 @@ async def model_response_fn(messages, chatbot):
 # Gradio interface
 def create_app():
     global GenerativeAI
-    with gr.Blocks() as GenerativeAI:
+    with gr.Blocks(fill_height=True) as GenerativeAI:
         gr.Markdown("# Wolfram|Alpha Generative AI\nInteract with Wolfram|Alpha: Computational Intelligence with Google Generative AI")
-        
+
         chat = gr.ChatInterface(
             fn=model_response_fn,
             type="messages",

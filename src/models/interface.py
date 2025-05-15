@@ -21,7 +21,6 @@ class baseFunctions:
             raise RuntimeError("Error during MCP tool call") from e
 
         prompt_content = []
-        prompt_content.append(query)
         if result:
             for section in result:
                 if hasattr(section, "type") and section.type == "text":
@@ -32,6 +31,9 @@ class baseFunctions:
                         "type": "image_url",
                         "image_url": {"url": image_data_uri}
                     })
+        if all(isinstance(item, str) and not item.strip() for item in prompt_content):
+            fallback_message = "There was no result from Wolfram Alpha for this query:."
+            prompt_content.append(f"{fallback_message}\n\n{query}")
 
         messages = [
             SystemMessage(
