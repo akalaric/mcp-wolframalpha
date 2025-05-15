@@ -7,3 +7,4 @@ langchain-community
 fastmcp
 google-generativeai
 langchain
+gradio

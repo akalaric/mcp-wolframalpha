@@ -79,11 +79,6 @@ class WolframAlphaServer:
             print(f"Image fetch error: {e}")
         return None
 
-    async def concurrent_queries(self, *queries):
-        """Handle multiple queries simultaneously"""
-        tasks = [self.execute_query(q) for q in queries]
-        return await asyncio.gather(*tasks)
-    
 # Test the client
 if __name__ == "__main__":
     async def main():

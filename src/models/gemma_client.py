@@ -16,7 +16,8 @@ class GemmaClient(baseFunctions):
         try:
             self.llm = ChatGoogleGenerativeAI(
                 model="gemini-2.0-flash",
-                google_api_key=api_key
+                google_api_key=api_key,
+                streaming=True
             )
         except Exception as e:
             raise e
