@@ -16,6 +16,7 @@ Included is an MCP-Client example utilizing Gemini via LangChain, demonstrating 
 -  **Multi-Client Support** Seamlessly handle interactions from multiple clients or interfaces.
 
 -  **MCP-Client example** using Gemini (via LangChain).
+-  **UI Support** using Gradio for a user-friendly web interface to interact with Google AI and Wolfram Alpha MCP server.
 
 ---
 
@@ -66,6 +67,23 @@ To use with Claude Desktop:
 ## Client Usage Example
 
 This project includes an LLM client that communicates with the MCP server.
+
+#### Run with Gradio UI
+- Required: GeminiAPI
+- Provides a local web interface to interact with Google AI and Wolfram Alpha.
+- To run the client directly from the command line:
+```bash
+python main.py
+```
+#### Docker
+To build and run the client inside a Docker container:
+```bash
+docker build -t wolframalpha -f .devops/llm.Dockerfile .
+
+docker run -it wolframalpha
+```
+#### UI
+![UI](configs/gradio_ui.png)
 
 #### Run as CLI Tool
 - Required: GeminiAPI
