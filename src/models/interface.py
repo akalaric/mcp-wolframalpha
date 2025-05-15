@@ -1,4 +1,4 @@
-from langchain.prompts import ChatPromptTemplate
+from langchain_core.messages import SystemMessage, HumanMessage
 from fastmcp import Client
 
 class baseFunctions:
@@ -17,23 +17,31 @@ class baseFunctions:
     async def invokeModel(self, query, vision=False):
         try:
             result = await self.client.call_tool("query_wolfram", {"query": query, "vision": vision})
-            wolfram_response = ", ".join(item.text for item in result)
         except Exception as e:
             raise RuntimeError("Error during MCP tool call") from e
-        
-        if wolfram_response:
-            prompt = ChatPromptTemplate.from_messages([
-                ("system", "You are a brilliant scientific assistant who excels at breaking down concepts into clear explanations. If any visual information is included, explain and show the content"),
-                ("human", "Here's the result: {wolfram_response}. Can you explain it?"),
-            ])
-            chain = prompt | self.generator
-            response = chain.invoke({"wolfram_response": wolfram_response})
-        else:
-            prompt = ChatPromptTemplate.from_messages([
-                ("system", "You are a knowledgeable scientific assistant. Provide a straightforward and simple explanation for the following question."),
-                ("human", "Here’s a question: {wolfram_response}. Can you break it down and provide a simple answer?"),
-            ])
-            chain = prompt | self.generator
-            response = chain.invoke({"wolfram_response": query})
-        
+
+        prompt_content = []
+        prompt_content.append(query)
+        if result:
+            for section in result:
+                if hasattr(section, "type") and section.type == "text":
+                    prompt_content.append(section.text)
+                elif hasattr(section, "type") and section.type == "image" and vision:
+                    image_data_uri = f"data:{section.mimeType};base64,{section.data}"
+                    prompt_content.append({
+                        "type": "image_url",
+                        "image_url": {"url": image_data_uri}
+                    })
+
+        messages = [
+            SystemMessage(
+                content=(
+                    "You are a brilliant scientific assistant who explains concepts clearly and concisely. "
+                    "If visual input (like images) is available, use it to enhance your explanation. "
+                    "Avoid generating LaTeX diagrams, TikZ, or PGFPlots code. "
+                    "Instead, explain the content in words or refer to the image directly."
+                )),
+            HumanMessage(content=prompt_content)
+        ]
+        response = await self.generator.ainvoke(messages)
         return response
