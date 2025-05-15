@@ -1,4 +1,4 @@
-# MCP Wolfram Alpha (Client + Server)
+# MCP Wolfram Alpha (Server + Client)
 Seamlessly integrate Wolfram Alpha into your chat applications.
 
 This project implements an MCP (Model Context Protocol) server designed to interface with the Wolfram Alpha API. It enables chat-based applications to perform computational queries and retrieve structured knowledge, facilitating advanced conversational capabilities.
@@ -73,14 +73,14 @@ This project includes an LLM client that communicates with the MCP server.
 - Provides a local web interface to interact with Google AI and Wolfram Alpha.
 - To run the client directly from the command line:
 ```bash
-python main.py
+python main.py --ui
 ```
 #### Docker
 To build and run the client inside a Docker container:
 ```bash
-docker build -t wolframalpha -f .devops/llm.Dockerfile .
+docker build -t wolframalphaui -f .devops/ui.Dockerfile .
 
-docker run -it wolframalpha
+docker run wolframalphaui
 ```
 #### UI
 ![UI](configs/gradio_ui.png)
