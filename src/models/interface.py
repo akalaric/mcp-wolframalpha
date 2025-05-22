@@ -1,4 +1,4 @@
-from langchain_core.messages import SystemMessage, HumanMessage
+from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from fastmcp import Client
 
 class baseFunctions:
@@ -13,8 +13,25 @@ class baseFunctions:
 
     async def __aexit__(self, exc_type, exc_value, traceback):
         await self.client.__aexit__(exc_type, exc_value, traceback)
+        
+        
+    async def interact(self, query:str, history=None):
+        messages = [
+            SystemMessage(content=("You are a brilliant scientific assistant who explains concepts clearly and concisely. "))]
+        if history:
+            for msg in history:
+                role = msg.get("role")
+                content = msg.get("content")
+                if role == "user":
+                    messages.append(HumanMessage(content=content))
+                elif role == "assistant":
+                    messages.append(AIMessage(content=content))
 
-    async def invokeModel(self, query, vision=False):
+        messages.append(HumanMessage(content=query))
+        response = await self.generator.ainvoke(messages)
+        return response
+
+    async def invokeModel(self, query, history=None, vision=False):
         try:
             result = await self.client.call_tool("query_wolfram", {"query": query, "vision": vision})
         except Exception as e:
@@ -42,8 +59,16 @@ class baseFunctions:
                     "If visual input (like images) is available, use it to enhance your explanation. "
                     "Avoid generating LaTeX diagrams, TikZ, or PGFPlots code. "
                     "Instead, explain the content in words or refer to the image directly."
-                )),
-            HumanMessage(content=prompt_content)
-        ]
+                ))]
+        if history:
+            for msg in history:
+                role = msg.get("role")
+                content = msg.get("content")
+                if role == "user":
+                    messages.append(HumanMessage(content=content))
+                elif role == "assistant":
+                    messages.append(AIMessage(content=content))
+
+        messages.append(HumanMessage(content=prompt_content))
         response = await self.generator.ainvoke(messages)
         return response

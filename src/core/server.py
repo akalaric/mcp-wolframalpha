@@ -45,7 +45,7 @@ async def wolfram_query(query: str, vision=False):
     return sections if vision else "\n\n".join(item["text"] for item in sections)
         
 if __name__ == "__main__":
-    # print(asyncio.run(wolfram_query("plot sinx", vision=True))) #Test the server
+    # print(asyncio.run(wolfram_query("sinx", vision=False))) #Test the server
     asyncio.run(mcp.run())
     
     
