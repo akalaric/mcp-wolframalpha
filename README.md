@@ -83,6 +83,9 @@ docker build -t wolframalphaui -f .devops/ui.Dockerfile .
 docker run wolframalphaui
 ```
 #### UI
+- Intuitive interface built with Gradio to interact with both Google AI (Gemini) and the Wolfram Alpha MCP server.
+- Allows users to switch between Wolfram Alpha, Google AI (Gemini), and query history.
+  
 ![UI](configs/gradio_ui.png)
 
 #### Run as CLI Tool
