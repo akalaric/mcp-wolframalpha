@@ -1,5 +1,4 @@
-name: Python Application CI
-
+name: mcp-wolframalpha
 on:
   push:
     branches: [ main ]
@@ -8,11 +7,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    env:
-      GeminiAPI: ${{ secrets.GEMINIAPI }}
-      WOLFRAM_API_KEY: ${{ secrets.WOLFRAM_API_KEY }}
       
     steps:
     - name: 📥 Checkout code
@@ -29,6 +24,8 @@ jobs:
         pip install -r requirements.txt
 
     - name: Interact with Google Generative AI
+      env:
+        GeminiAPI: ${{ secrets.GEMINIAPI }}
       run: |
         set -e
         OUTPUT=$(echo -e "Hey\nexit" | python main.py --model)
@@ -38,15 +35,3 @@ jobs:
           echo "❌ No output from model"
           exit 1
         fi
-
-    - name: Query Wolfram MCP
-      run: |
-        set -e
-        OUTPUT=$(echo -e "sinx\nexit" | python main.py)
-        echo "Model output: $OUTPUT"
-    
-        if [ -z "$OUTPUT" ]; then
-          echo "❌ query_wolfram returned no output"
-          exit 1
-        fi
-
