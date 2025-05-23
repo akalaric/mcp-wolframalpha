@@ -10,7 +10,10 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    env:
+      GeminiAPI: ${{ secrets.GEMINIAPI }}
+      WOLFRAM_API_KEY: ${{ secrets.WOLFRAM_API_KEY }}
+      
     steps:
     - name: 📥 Checkout code
       uses: actions/checkout@v3
