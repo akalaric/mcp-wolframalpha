@@ -6,6 +6,7 @@ from src.ui import app
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Invoke Gemma with query_wolfram MCP")
     parser.add_argument("--ui", action="store_true", help="Enable ui mode")
+    parser.add_argument("--model", action="store_true", help="Interact with Google Generative AI")
     args = parser.parse_args()
     
     async def main():
@@ -15,9 +16,11 @@ if __name__ == "__main__":
                 if user_input.lower() == "exit":
                     print("Exiting...")
                     break
-                if not user_input.strip():
+                elif not user_input.strip():
                     print("No input provided. Please enter a valid question.")
                     continue
+                elif args.model:
+                    response = await client.interact(user_input)
                 else:
                     response = await client.invokeModel(user_input)
                 print(response.content)
