@@ -1,0 +1,54 @@
+name: Python Application CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    env:
+      GeminiAPI: ${{ secrets.GEMINIAPI }}
+      WOLFRAM_API_KEY: ${{ secrets.WOLFRAM_API_KEY }}
+      
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v3
+
+    - name: 🐍 Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: 📦 Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Interact with Google Generative AI
+      run: |
+        OUTPUT=$(echo "Hey" | python main.py --model)
+        echo "Model output: $OUTPUT"
+        if [ -z "$OUTPUT" ]; then
+          echo "❌ Model returned no output"
+          exit 1
+        else
+          echo "Model returned a response"
+          echo "exit" | python main.py --model
+        fi
+
+    - name: query_wolfram MCP
+      run: |
+        OUTPUT=$(echo "sinx" | python main.py)
+        echo "Model output: $OUTPUT"
+        if [ -z "$OUTPUT" ]; then
+          echo "❌ query_wolfram returned no output"
+          exit 1
+        else
+          echo "query_wolfram returned a response"
+          echo "exit" | python main.py --model
+        fi
+
