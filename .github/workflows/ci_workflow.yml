@@ -1,0 +1,37 @@
+name: mcp-wolframalpha
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+      
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v3
+
+    - name: 🐍 Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: 📦 Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Interact with Google Generative AI
+      env:
+        GeminiAPI: ${{ secrets.GEMINIAPI }}
+      run: |
+        set -e
+        OUTPUT=$(echo -e "Hey\nexit" | python main.py --model)
+        echo "Model output: $OUTPUT"
+    
+        if [ -z "$OUTPUT" ]; then
+          echo "❌ No output from model"
+          exit 1
+        fi
