@@ -5,6 +5,8 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  schedule:
+    - cron: '0 0 * * 6'
 
 jobs:
   build:
@@ -30,25 +32,23 @@ jobs:
 
     - name: Interact with Google Generative AI
       run: |
-        OUTPUT=$(echo "Hey" | python main.py --model)
+        set -e
+        OUTPUT=$(echo -e "Hey\nexit" | python main.py --model)
         echo "Model output: $OUTPUT"
+    
         if [ -z "$OUTPUT" ]; then
-          echo "❌ Model returned no output"
+          echo "❌ No output from model"
           exit 1
-        else
-          echo "Model returned a response"
-          echo "exit" | python main.py --model
         fi
 
-    - name: query_wolfram MCP
+    - name: Query Wolfram MCP
       run: |
-        OUTPUT=$(echo "sinx" | python main.py)
+        set -e
+        OUTPUT=$(echo -e "sinx\nexit" | python main.py)
         echo "Model output: $OUTPUT"
+    
         if [ -z "$OUTPUT" ]; then
           echo "❌ query_wolfram returned no output"
           exit 1
-        else
-          echo "query_wolfram returned a response"
-          echo "exit" | python main.py --model
         fi
 
