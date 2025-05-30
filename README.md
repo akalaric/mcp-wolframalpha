@@ -5,6 +5,7 @@ This project implements an MCP (Model Context Protocol) server designed to inter
 
 Included is an MCP-Client example utilizing Gemini via LangChain, demonstrating how to connect large language models to the MCP server for real-time interactions with Wolfram Alpha’s knowledge engine.
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/akalaric/mcp-wolframalpha)
 ---
 
 ## Features
