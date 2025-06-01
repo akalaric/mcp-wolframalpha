@@ -14,7 +14,6 @@ class baseFunctions:
     async def __aexit__(self, exc_type, exc_value, traceback):
         await self.client.__aexit__(exc_type, exc_value, traceback)
         
-        
     async def interact(self, query:str, history=None):
         messages = [
             SystemMessage(content=("You are a brilliant scientific assistant who explains concepts clearly and concisely. "))]
@@ -43,23 +42,23 @@ class baseFunctions:
                 if hasattr(section, "type") and section.type == "text":
                     prompt_content.append(section.text)
                 elif hasattr(section, "type") and section.type == "image" and vision:
-                    image_data_uri = f"data:{section.mimeType};base64,{section.data}"
-                    prompt_content.append({
-                        "type": "image_url",
-                        "image_url": {"url": image_data_uri}
-                    })
+                     prompt_content.append(f"[Image URL]({section.data})")
+                     
+        # Fallback if no useful content
         if all(isinstance(item, str) and not item.strip() for item in prompt_content):
             fallback_message = "There was no result from Wolfram Alpha for this query:."
             prompt_content.append(f"{fallback_message}\n\n{query}")
 
         messages = [
-            SystemMessage(
-                content=(
-                    "You are a brilliant scientific assistant who explains concepts clearly and concisely. "
-                    "If visual input (like images) is available, use it to enhance your explanation. "
-                    "Avoid generating LaTeX diagrams, TikZ, or PGFPlots code. "
-                    "Instead, explain the content in words or refer to the image directly."
-                ))]
+                    SystemMessage(
+                        content=(
+                            "You are a brilliant scientific assistant who explains concepts clearly and concisely. "
+                            "If visual input (like images) is available, include it as a Markdown image: `![description](URL)`. "
+                            "Do not omit the image. Always include the image URL visibly using Markdown format. "
+                            "Explain the content clearly, and if an image is present, refer to it directly in your explanation."
+                        )
+                    )]
+        messages.append(HumanMessage(content="\n\n".join(prompt_content)))
         if history:
             for msg in history:
                 role = msg.get("role")
@@ -68,7 +67,6 @@ class baseFunctions:
                     messages.append(HumanMessage(content=content))
                 elif role == "assistant":
                     messages.append(AIMessage(content=content))
-
-        messages.append(HumanMessage(content=prompt_content))
-        response = await self.generator.ainvoke(messages)
+                    
+        response = await self.generator.ainvoke(messages)  
         return response

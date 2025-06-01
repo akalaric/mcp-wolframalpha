@@ -3,7 +3,7 @@ import sys
 import asyncio
 import gradio as gr
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from models.gemma_client import GemmaClient
+from models.googleGenerativeAI_client import GemmaClient
 dir_path = os.path.dirname(os.path.realpath(__file__))
 favicon_path = os.path.join(dir_path, 'wolfram-alpha.png')
 client = None 
@@ -24,8 +24,8 @@ async def model_response_fn(messages, chatbot, history, GenAI):
     if GenAI:
         response = await client.interact(messages, chatHistory)
     else:
-        response = await client.invokeModel(messages, chatHistory, vision=False)
-        
+        response = await client.invokeModel(messages, chatHistory, vision=True)
+
     partial = ""
     for line in response.content.splitlines():
         partial += line + "\n"
@@ -35,19 +35,21 @@ async def model_response_fn(messages, chatbot, history, GenAI):
 # Gradio interface
 def create_app():
     with gr.Blocks(fill_height=True) as GenerativeAI:
+
         with gr.Sidebar(open=False):
             gr.Markdown("⚙️ LLM Parameters")
-            additional_inputs=[
-            gr.Checkbox(label="History", info="Turn chat history on or off"),
-            gr.Checkbox(label="Google Generative AI", info="Interact with Google Generative AI"),
-        ]
-            
+            history_checkbox = gr.Checkbox(label="History", info="Turn chat history on or off")
+            gemini_checkbox = gr.Checkbox(
+                label="Google Generative AI Only",
+                info="Use only Google Generative AI (disables Wolfram|Alpha integration)"
+                )
+
         gr.Markdown("# Wolfram|Alpha Generative AI")
         gr.ChatInterface(
             fn=model_response_fn,
             type="messages",
             description="Interact with Wolfram|Alpha: Computational Intelligence with Google Generative AI",
-            additional_inputs=additional_inputs,
+            additional_inputs = [history_checkbox, gemini_checkbox],
             autoscroll=True,
             autofocus=True,
             editable=True,
@@ -56,3 +58,7 @@ def create_app():
         GenerativeAI.unload(shutdown)
 
     return GenerativeAI
+
+if __name__ == "__main__":
+    gradio_app = create_app()
+    gradio_app.launch(favicon_path=favicon_path)
