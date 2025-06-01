@@ -22,30 +22,34 @@ async def wolfram_query(query: str, vision=False):
     try:
         wolfram_server = WolframAlphaServer()
     except Exception as e:
-        raise Exception(f"Initialization error: {e}")
+        raise Exception(f"WolframAlpha Server Initialization error: {e}")
+    
+    results = await wolfram_server.process_query(query)
 
     sections = []
-    results = await wolfram_server.execute_query(query)
-
     for item in results:
         if vision:
-            if item.type == "text":
-                sections.append({"type": "text", "text": item.text})
-            elif item.type == "image":
-                image_data_uri = f"data:{item.mimeType};base64,{item.data}"
-                sections.append({
-                    "type": "image",
-                    "data": image_data_uri
-                })
+            if hasattr(item, 'type'):
+                if item.type == "text":
+                    sections.append({"type": "text", "text": item.text})
+                elif item.type == "image":
+                    sections.append({
+                        "type": "image",
+                        "url": item.data  # direct URL
+                    })
+            elif isinstance(item, str):
+                sections.append({"type": "text", "text": item})
         else:
-            if item.type == "text":
-                print(item.text)
-                sections.append({"type": "text", "text": item.text})
+            if hasattr(item, 'type'):
+                if item.type == "text":
+                    sections.append({"type": "text", "text": item.text})
+            elif isinstance(item, str):
+                sections.append({"type": "text", "text": item})
 
     return sections if vision else "\n\n".join(item["text"] for item in sections)
         
 if __name__ == "__main__":
-    # print(asyncio.run(wolfram_query("sinx", vision=False))) #Test the server
+    # print(asyncio.run(wolfram_query("sinx", vision=True))) #Test the server
     asyncio.run(mcp.run())
     
     

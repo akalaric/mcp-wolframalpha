@@ -18,7 +18,7 @@ class TextContent:
 @dataclass
 class ImageContent:
     type: str
-    data: str  # base64 encoded
+    data: str  # URL
     mimeType: str
 
 ResultType = Union[TextContent, ImageContent]
@@ -32,60 +32,45 @@ class WolframAlphaServer:
             self.client = wolframalpha.Client(api_key)
         except Exception as e:
             raise e
-
-    async def execute_query(self, query: str) -> list[ResultType] | str:
+        
+    async def process_query(self, query: str) -> list[ResultType]:
         """Main query execution method"""
         try:
-            res = await asyncio.to_thread(self.client.query, query)
+            res = await self.client.aquery(str(query))
+            return await self.process_results(res)
         except Exception as e:
-            return f"Error: {str(e)}"
-        return await self.process_results(res)
+            return [TextContent(type="text", text=f"Error: {str(e)}")]
 
     async def process_results(self, res) -> list[ResultType]:
         """Process results into text/image formats"""
         results: list[ResultType] = []
-
         try:
-            async with aiohttp.ClientSession() as session:
-                for pod in res.pods:
-                    for subpod in pod.subpods:
-                        if subpod.get("plaintext"):
-                            results.append(TextContent(
-                                type="text",
-                                text=subpod.plaintext
-                            ))
-                        elif subpod.get("img"):
-                            img_url = subpod.img.src if subpod.img else None
-                            if img_url:
-                                image_data = await self.fetch_image(session, img_url)
-                                if image_data:
-                                    results.append(ImageContent(
-                                        type="image",
-                                        data=image_data,
-                                        mimeType="image/png"
-                                    ))
+            for pod in res.pods:
+                for subpod in pod.subpods:
+                    if subpod.get("plaintext"):
+                        results.append(TextContent(
+                            type="text",
+                            text=subpod.plaintext
+                        ))
+                    elif subpod.get("img"):
+                        img_src = subpod["img"]["@src"]
+                        results.append(ImageContent(
+                            type="image",
+                            data=img_src,  # store URL directly
+                            mimeType="image/png"
+                        ))
         except Exception as e:
             raise Exception("Failed to parse response from Wolfram Alpha") from e
         return results
-
-    async def fetch_image(self, session: aiohttp.ClientSession, url: str) -> str | None:
-        """Download and encode image from URL"""
-        try:
-            async with session.get(url) as img_response:
-                if img_response.status == 200:
-                    img_bytes = await img_response.read()
-                    return base64.b64encode(img_bytes).decode("utf-8")
-        except Exception as e:
-            print(f"Image fetch error: {e}")
-        return None
 
 # Test the client
 if __name__ == "__main__":
     async def main():
         test = WolframAlphaServer()
-        result = await test.execute_query("1+1")
+        result = await test.process_query("sin(x)*cos(x)")
         for item in result:
             if item.type == "text":
                 print (item.text)
-
+            if item.type == "image":
+                print(item.data)
     asyncio.run(main())
