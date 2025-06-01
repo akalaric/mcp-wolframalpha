@@ -33,6 +33,6 @@ if __name__ == "__main__":
                 if user_input.lower() == "exit":
                     print("Exiting...")
                     break
-                response = await client.invokeModel(user_input, vision=False)
+                response = await client.invokeModel(user_input, vision=True)
                 print(response.content)
     asyncio.run(main())

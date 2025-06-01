@@ -1,6 +1,6 @@
 import asyncio
 import argparse
-from src.models.gemma_client import GemmaClient
+from src.models.googleGenerativeAI_client import GemmaClient
 from src.ui import app
 
 if __name__ == "__main__":
