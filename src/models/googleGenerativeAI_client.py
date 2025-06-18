@@ -10,7 +10,7 @@ load_dotenv()
 
 class GemmaClient(baseFunctions):
     def __init__(self):
-        api_key = os.getenv("GeminiAPI")
+        api_key = os.getenv("GEMINI_API_KEY")
         if not api_key:
             raise ValueError("GeminiAPI environment variable not set")
         try:
@@ -33,6 +33,6 @@ if __name__ == "__main__":
                 if user_input.lower() == "exit":
                     print("Exiting...")
                     break
-                response = await client.invokeModel(user_input, vision=True)
-                print(response.content)
+                response = await client.invoke_model(user_input, vision=True)
+                print(response)
     asyncio.run(main())
