@@ -25,7 +25,7 @@ jobs:
 
     - name: Interact with Google Generative AI
       env:
-        GeminiAPI: ${{ secrets.GEMINIAPI }}
+        GEMINI_API_KEY: ${{ secrets.GEMINIAPI }}
       run: |
         set -e
         OUTPUT=$(echo -e "Hey\nexit" | python main.py --model)
@@ -33,5 +33,18 @@ jobs:
     
         if [ -z "$OUTPUT" ]; then
           echo "❌ No output from model"
+          exit 1
+        fi
+
+    - name: Test WolframAlpha Client
+      env:
+        WOLFRAM_API_KEY: ${{ secrets.WOLFRAMAPI }}
+      run: |
+        set -e
+        OUTPUT=$(python src/api/wolfram_client.py)
+        echo "Model output: $OUTPUT"
+    
+        if [ -z "$OUTPUT" ]; then
+          echo "❌ No output from WolframAlpha Client"
           exit 1
         fi
