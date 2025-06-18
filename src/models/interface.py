@@ -12,7 +12,7 @@ class baseFunctions:
         return self
 
     async def __aexit__(self, exc_type, exc_value, traceback):
-        await self.client.__aexit__(exc_type, exc_value, traceback)
+        await self.client.__aexit__(exc_type, exc_value, traceback) 
         
     async def interact(self, query:str, history=None):
         messages = [
@@ -30,20 +30,19 @@ class baseFunctions:
         response = await self.generator.ainvoke(messages)
         return response
 
-    async def invokeModel(self, query, history=None, vision=False):
+    async def invoke_model(self, query, history=None, vision=False):
         try:
             result = await self.client.call_tool("query_wolfram", {"query": query, "vision": vision})
         except Exception as e:
-            raise RuntimeError("Error during MCP tool call") from e
-
+            raise RuntimeError(f"Error during MCP tool call: {e}")
         prompt_content = []
         if result:
             for section in result:
-                if hasattr(section, "type") and section.type == "text":
+                try:
                     prompt_content.append(section.text)
-                elif hasattr(section, "type") and section.type == "image" and vision:
-                     prompt_content.append(f"[Image URL]({section.data})")
-                     
+                except Exception as e:
+                    raise e
+
         # Fallback if no useful content
         if all(isinstance(item, str) and not item.strip() for item in prompt_content):
             fallback_message = "There was no result from Wolfram Alpha for this query:."
@@ -51,12 +50,22 @@ class baseFunctions:
 
         messages = [
                     SystemMessage(
-                        content=(
-                            "You are a brilliant scientific assistant who explains concepts clearly and concisely. "
-                            "If visual input (like images) is available, include it as a Markdown image: `![description](URL)`. "
-                            "Do not omit the image. Always include the image URL visibly using Markdown format. "
-                            "Explain the content clearly, and if an image is present, refer to it directly in your explanation."
-                        )
+                            content = (
+                                """
+                                You are a knowledgeable and articulate scientific assistant with a strong ability to communicate complex scientific and mathematical concepts in a clear, concise, and accessible manner.
+
+                                **You must always display image URLs using Markdown image syntax**, like this:
+                                ![Alt text](https://example.com/image.png)
+
+                                ❗ No exceptions — all image URLs must be embedded as Markdown images, whether they appear in the body of your explanation, in image references, or at the end of your response. Do not output plain image URLs.
+
+                                Your explanations should be accurate, detailed, well-structured, and tailored to the level of the audience, making even advanced topics easy to grasp.
+
+                                When an image, graph, or diagram is provided, you must reference it directly in your explanation, using it to support and enrich your analysis. Highlight key features, trends, or relationships shown in the image to reinforce understanding.
+
+                                Your goal is to educate effectively, ensuring that the explanation is both insightful and engaging.
+                                """
+                            )
                     )]
         messages.append(HumanMessage(content="\n\n".join(prompt_content)))
         if history:

@@ -34,5 +34,5 @@ if __name__ == "__main__":
                     print("Exiting...")
                     break
                 response = await client.invoke_model(user_input, vision=True)
-                print(response)
+                print(response.content)
     asyncio.run(main())
