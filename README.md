@@ -103,5 +103,11 @@ docker build -t wolframalpha -f .devops/llm.Dockerfile .
 docker run -it wolframalpha
 ```
 
-   
+## Contact
+
+Feel free to give feedback. The e-mail address is shown if you execute this in a shell:
+
+```sh
+printf "\x61\x6b\x61\x6c\x61\x72\x69\x63\x31\x40\x6f\x75\x74\x6c\x6f\x6f\x6b\x2e\x63\x6f\x6d\x0a"
+```
 
