@@ -20,14 +20,17 @@ jobs:
 
     - name: 📦 Install dependencies
       run: |
+        set -e
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install uv
+        uv sync
 
     - name: Interact with Google Generative AI
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINIAPI }}
       run: |
         set -e
+        source .venv/bin/activate
         OUTPUT=$(echo -e "Hey\nexit" | python main.py --model)
         echo "Model output: $OUTPUT"
     
@@ -41,6 +44,7 @@ jobs:
         WOLFRAM_API_KEY: ${{ secrets.WOLFRAMAPI }}
       run: |
         set -e
+        source .venv/bin/activate
         OUTPUT=$(python src/api/wolfram_client.py)
         echo "Model output: $OUTPUT"
     
