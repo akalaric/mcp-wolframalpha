@@ -12,12 +12,6 @@ client = None
 async def startup():
     global client
     client = GemmaClient()
-    await client.__aenter__()
-
-async def shutdown():
-    global client
-    if client:
-        await client.__aexit__(None, None, None)
         
 async def stream_response(response):
     partial = ""
@@ -67,7 +61,6 @@ def create_app():
             stop_btn=True
         )
         GenerativeAI.load(startup)
-        GenerativeAI.unload(shutdown)
     
     with GenerativeAI.route("/Gemini"):
         gr.Markdown("# Gemini-2.0-flash")

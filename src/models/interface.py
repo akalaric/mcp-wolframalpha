@@ -1,18 +1,11 @@
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from fastmcp import Client
+import json
 
 class baseFunctions:
     def __init__(self, generator, server_path="src/core/server.py"):
         self.generator = generator
         self.server_path = server_path
-        self.client = None
-
-    async def __aenter__(self):
-        self.client = await Client(self.server_path).__aenter__()
-        return self
-
-    async def __aexit__(self, exc_type, exc_value, traceback):
-        await self.client.__aexit__(exc_type, exc_value, traceback) 
         
     async def interact(self, query:str, history=None):
         messages = [
@@ -32,16 +25,18 @@ class baseFunctions:
 
     async def invoke_model(self, query, history=None, vision=False):
         try:
-            result = await self.client.call_tool("query_wolfram", {"query": query, "vision": vision})
+            async with Client(self.server_path) as client:
+                result = await client.call_tool("query_wolfram", {"query": query, "vision": vision})
         except Exception as e:
             raise RuntimeError(f"Error during MCP tool call: {e}")
         prompt_content = []
+        
         if result:
-            for section in result:
-                try:
-                    prompt_content.append(section.text)
-                except Exception as e:
-                    raise e
+            for text_content in result.content:
+                    items = json.loads(text_content.text)
+                    for item in items:
+                        if item.get("type") == "text":
+                            prompt_content.append(item["text"])
 
         # Fallback if no useful content
         if all(isinstance(item, str) and not item.strip() for item in prompt_content):

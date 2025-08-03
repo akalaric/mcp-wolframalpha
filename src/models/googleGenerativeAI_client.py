@@ -27,12 +27,12 @@ class GemmaClient(baseFunctions):
 # Test the client
 if __name__ == "__main__":
     async def main():
-        async with GemmaClient() as client:
-            while True:
-                user_input = await asyncio.to_thread(input, "Enter question (or type 'exit' to quit): ")
-                if user_input.lower() == "exit":
-                    print("Exiting...")
-                    break
-                response = await client.invoke_model(user_input, vision=True)
-                print(response.content)
+        client = GemmaClient()
+        while True:
+            user_input = await asyncio.to_thread(input, "Enter question (or type 'exit' to quit): ")
+            if user_input.lower() == "exit":
+                print("Exiting...")
+                break
+            response = await client.invoke_model(user_input, vision=True)
+            print(response.content)
     asyncio.run(main())
