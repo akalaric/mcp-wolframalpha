@@ -1,24 +1,22 @@
 import os
 import sys
-from dotenv import load_dotenv
-import wolframalpha
-import aiohttp
 import asyncio
-import base64
-from dataclasses import dataclass
+import logging
 from typing import Union
+from pydantic import BaseModel
+import xmltodict, multidict, httpx
+from wolframalpha import Client, Document
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from dotenv import load_dotenv
 load_dotenv()
 
-@dataclass
-class TextContent:
+class TextContent(BaseModel):
     type: str
     text: str
 
-@dataclass
-class ImageContent:
+class ImageContent(BaseModel):
     type: str
-    data: str  # URL
+    data: str 
     mimeType: str
 
 ResultType = Union[TextContent, ImageContent]
@@ -29,7 +27,7 @@ class WolframAlphaServer:
         if api_key is None:
             raise ValueError("WOLFRAM_API_KEY environment variable not set")
         try:
-            self.client = wolframalpha.Client(api_key)
+            self.client = Client(api_key)
         except Exception as e:
             raise e
         
@@ -37,9 +35,23 @@ class WolframAlphaServer:
         """Main query execution method"""
         try:
             res = await self.client.aquery(str(query))
-            return await self.process_results(res)
+        except AssertionError as ae:
+            logging.warning("wolframalpha library’s assertion error -> Using manual API call")
+            timeout = httpx.Timeout(50.0, read=50.0)
+            params = {
+                "appid": self.client.app_id,
+                "input": str(query)
+            }
+
+            async with httpx.AsyncClient(timeout=timeout) as client:
+                resp = await client.get(self.client.url, params=params)
+            res = xmltodict.parse(resp.content, postprocessor=Document.make)['queryresult']
+            
         except Exception as e:
-            return [TextContent(type="text", text=f"Error: {str(e)}")]
+            logging.exception("Unexpected error during query processing")
+            raise e
+        
+        return await self.process_results(res)
 
     async def process_results(self, res) -> list[ResultType]:
         """Process results into text/image formats"""
@@ -67,10 +79,11 @@ class WolframAlphaServer:
 if __name__ == "__main__":
     async def main():
         test = WolframAlphaServer()
-        result = await test.process_query("sin(x)*cos(x)")
-        for item in result:
-            if item.type == "text":
-                print (item.text)
-            if item.type == "image":
-                print(item.data)
+        while True:
+            result = await test.process_query("sin(x)")
+            for item in result:
+                if item.type == "text":
+                    print (item.text)
+                if item.type == "image":
+                    print(item.data)
     asyncio.run(main())
