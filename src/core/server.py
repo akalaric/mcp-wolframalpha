@@ -2,7 +2,7 @@ import sys
 import os
 import asyncio
 import base64
-from fastmcp import FastMCP
+from fastmcp import FastMCP, Client
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from api.wolfram_client import WolframAlphaServer
 
@@ -49,7 +49,15 @@ async def wolfram_query(query: str, vision=False):
     return sections if vision else "\n\n".join(item["text"] for item in sections)
         
 if __name__ == "__main__":
-    # print(asyncio.run(wolfram_query("sinx", vision=True))) #Test the server
+    
+    # Test the server
+    # async def main():
+    #     async with Client(mcp) as client:
+    #         result = await client.call_tool("query_wolfram", {"query": "sinx", "vision": True})
+    #     print(result)   
+        
+    # asyncio.run(main())
+    
     asyncio.run(mcp.run())
     
     
