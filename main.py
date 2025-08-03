@@ -10,21 +10,21 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     async def main():
-        async with GemmaClient() as client:
-            while True:
-                user_input = await asyncio.to_thread(input, "\nEnter question (or type 'exit' to quit): ")
-                if user_input.lower() == "exit":
-                    print("Exiting...")
-                    break
-                elif not user_input.strip():
-                    print("No input provided. Please enter a valid question.")
-                    continue
-                elif args.model:
-                    response = await client.interact(user_input)
-                else:
-                    response = await client.invokeModel(user_input)
-                print(response.content)
-                
+        client = GemmaClient()
+        while True:
+            user_input = await asyncio.to_thread(input, "\nEnter question (or type 'exit' to quit): ")
+            if user_input.lower() == "exit":
+                print("Exiting...")
+                break
+            elif not user_input.strip():
+                print("No input provided. Please enter a valid question.")
+                continue
+            elif args.model:
+                response = await client.interact(user_input)
+            else:
+                response = await client.invoke_model(user_input, vision=True)
+            print(response.content)
+            
     if args.ui:
         gradio_app = app.create_app()
         gradio_app.launch(favicon_path=app.favicon_path)

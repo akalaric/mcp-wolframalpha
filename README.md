@@ -45,6 +45,13 @@ Create a .env file based on the example:
    pip install -r requirements.txt
    ```
 
+  Install the required dependencies with uv:
+  Ensure [`uv`](https://github.com/astral-sh/uv) is installed.
+
+   ```bash
+   uv sync
+   ```
+
 ### Configuration
 
 To use with the VSCode MCP Server:
