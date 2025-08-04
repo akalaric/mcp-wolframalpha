@@ -36,7 +36,7 @@ class WolframAlphaServer:
         """Main query execution method"""
         try:
             res = await self.client.aquery(str(query))
-            
+            return await self.process_results(res)
         except Exception:
             logging.warning("Wolfram|Alpha lib assertion error -> Using manual API call")
             timeout = httpx.Timeout(30.0, read=30.0)
@@ -45,25 +45,18 @@ class WolframAlphaServer:
                 "input": str(query)
             }
             res = None
-            max_retries = 4 
-            attempt = 0
-            # fix: correct retry logic and result assignment for WolframAlpha API requests
-            while res is None and attempt < max_retries:
+            max_retries = 4
+            for attempt in range(1, max_retries + 1):
                 try:
                     async with httpx.AsyncClient(timeout=timeout) as client:
                         resp = await client.get(self.client.url, params=params)
-                        if resp.status_code == 200 and resp.content:
-                            res = xmltodict.parse(resp.content, postprocessor=Document.make)['queryresult']
-                            break 
+                        res = xmltodict.parse(resp.content, postprocessor=Document.make)['queryresult']
+                        if res:
+                            return await self.process_results(res)
                 except Exception as e:
-                    logging.warning(f"error: {e} Timeout, retrying...")
-                    attempt += 1
+                    logging.warning(f"Attempt {attempt} failed: {e}. Retrying in 2s...")
                 await asyncio.sleep(2)
-
-            if res is None:
-                raise RuntimeError("Failed to get a valid response from WolframAlpha API after several retries.")
-            else:
-                return await self.process_results(res)
+            raise RuntimeError("Failed to get a valid response from WolframAlpha API after several retries.")
 
     async def process_results(self, res) -> list[ResultType]:
         """Process results into text/image formats"""
