@@ -20,6 +20,7 @@ class ImageContent(BaseModel):
     mimeType: str
 
 ResultType = Union[TextContent, ImageContent]
+logging.basicConfig(level=logging.INFO)
 
 class WolframAlphaServer:
     def __init__(self):
@@ -35,23 +36,34 @@ class WolframAlphaServer:
         """Main query execution method"""
         try:
             res = await self.client.aquery(str(query))
-        except AssertionError as ae:
-            logging.warning("wolframalpha library’s assertion error -> Using manual API call")
-            timeout = httpx.Timeout(50.0, read=50.0)
+            
+        except Exception:
+            logging.warning("Wolfram|Alpha lib assertion error -> Using manual API call")
+            timeout = httpx.Timeout(30.0, read=30.0)
             params = {
                 "appid": self.client.app_id,
                 "input": str(query)
             }
+            res = None
+            max_retries = 4 
+            attempt = 0
+            # fix: correct retry logic and result assignment for WolframAlpha API requests
+            while res is None and attempt < max_retries:
+                try:
+                    async with httpx.AsyncClient(timeout=timeout) as client:
+                        resp = await client.get(self.client.url, params=params)
+                        if resp.status_code == 200 and resp.content:
+                            res = xmltodict.parse(resp.content, postprocessor=Document.make)['queryresult']
+                            break 
+                except Exception as e:
+                    logging.warning(f"error: {e} Timeout, retrying...")
+                    attempt += 1
+                await asyncio.sleep(2)
 
-            async with httpx.AsyncClient(timeout=timeout) as client:
-                resp = await client.get(self.client.url, params=params)
-            res = xmltodict.parse(resp.content, postprocessor=Document.make)['queryresult']
-            
-        except Exception as e:
-            logging.exception("Unexpected error during query processing")
-            raise e
-        
-        return await self.process_results(res)
+            if res is None:
+                raise RuntimeError("Failed to get a valid response from WolframAlpha API after several retries.")
+            else:
+                return await self.process_results(res)
 
     async def process_results(self, res) -> list[ResultType]:
         """Process results into text/image formats"""
@@ -79,11 +91,10 @@ class WolframAlphaServer:
 if __name__ == "__main__":
     async def main():
         test = WolframAlphaServer()
-        while True:
-            result = await test.process_query("sin(x)")
-            for item in result:
-                if item.type == "text":
-                    print (item.text)
-                if item.type == "image":
-                    print(item.data)
+        result = await test.process_query("sinx")
+        for item in result:
+            if item.type == "text":
+                print (item.text)
+            if item.type == "image":
+                print(item.data)
     asyncio.run(main())
