@@ -1,12 +1,20 @@
 import sys
 import os
 import asyncio
-import base64
-from fastmcp import FastMCP, Client
+import logging
+from fastmcp import FastMCP
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from api.wolfram_client import WolframAlphaServer
 
 mcp = FastMCP("WolframAlphaServer")
+
+try:
+    wolfram_server = WolframAlphaServer()
+except Exception as e:
+    logging.error(f"Error initializing WolframServer: {e}", file=sys.stderr)
+    sys.exit(1)
+
+
 @mcp.tool(name="query_wolfram")
 async def wolfram_query(query: str, vision=False):
     """
@@ -19,11 +27,6 @@ async def wolfram_query(query: str, vision=False):
     Returns:
         Union[str, list]: Formatted string or structured message list.
     """
-    try:
-        wolfram_server = WolframAlphaServer()
-    except Exception as e:
-        raise Exception(f"WolframAlpha Server Initialization error: {e}")
-    
     results = await wolfram_server.process_query(query)
 
     sections = []
@@ -58,6 +61,6 @@ if __name__ == "__main__":
         
     # asyncio.run(main())
     
-    asyncio.run(mcp.run())
+    mcp.run()
     
     
