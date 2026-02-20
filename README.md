@@ -3,9 +3,14 @@ Seamlessly integrate Wolfram Alpha into your chat applications.
 
 This project implements an MCP (Model Context Protocol) server designed to interface with the Wolfram Alpha API. It enables chat-based applications to perform computational queries and retrieve structured knowledge, facilitating advanced conversational capabilities.
 
-Included is an MCP-Client example utilizing Gemini via LangChain, demonstrating how to connect large language models to the MCP server for real-time interactions with Wolfram Alpha’s knowledge engine.
+Included is an MCP-Client example utilizing Gemini via LangChain, demonstrating how to connect large language models to the MCP server for real-time interactions with Wolfram Alpha's knowledge engine.
 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/akalaric/mcp-wolframalpha)
+
+<a href="https://glama.ai/mcp/servers/@akalaric/mcp-wolframalpha">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@akalaric/mcp-wolframalpha/badge" alt="MCP_WolframAlpha MCP server" />
+</a>
+
 ---
 
 ## Features
@@ -117,4 +122,3 @@ Feel free to give feedback. The e-mail address is shown if you execute this in a
 ```sh
 printf "\x61\x6b\x61\x6c\x61\x72\x69\x63\x31\x40\x6f\x75\x74\x6c\x6f\x6f\x6b\x2e\x63\x6f\x6d\x0a"
 ```
-
