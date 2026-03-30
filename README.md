@@ -8,6 +8,10 @@ Included is an MCP-Client example utilizing Gemini via LangChain, demonstrating 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/akalaric/mcp-wolframalpha)
 ---
 
+## Hosted deployment
+
+A hosted deployment is available on [Fronteir AI](https://fronteir.ai/mcp/ricocf-mcp-wolframalpha).
+
 ## Features
 
 -  **Wolfram|Alpha Integration** for math, science, and data queries.
